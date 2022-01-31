@@ -32,31 +32,38 @@ const Image = styled.img`
   width: 100%;
 `;
 
+const ImoticionBtn = styled.i`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  background-image: ${({ theme }) =>
+    `linear-gradient(180deg,${theme.orangeColor}, ${theme.pinkColor})`};
+  font-size: ${({ theme }) => theme.normalFontSize};
+`;
+
 const Glass = styled.div`
   z-index: 1;
   position: absolute;
   bottom: 0px;
   top: 0px;
+  width: 40px;
+  height: 40px;
   left: 0px;
   right: 0px;
   margin: auto;
   font-size: 28px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
   color: white;
   flex-direction: column;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: ${({ theme }) =>
-    `linear-gradient(180deg,${theme.orangeColor}, ${theme.pinkColor})`};
-  i {
-    font-size: ${({ theme }) => theme.normalFontSize};
-  }
 `;
 
 const ProductImage = styled.img`
+  opacity: 1;
   border-radius: ${({ theme }) => theme.miniRadius};
 `;
 
@@ -65,10 +72,25 @@ const Modal = styled.div`
   width: 250px;
   height: 80px;
   background-color: white;
-  // position: ;
+  position: absolute;
+  opacity: 1;
   display: flex;
   top: 50px;
   padding: 10px;
+  left: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-bottom-color: white;
+    border-top: 7px;
+    margin-top: -7px;
+  }
+
   i {
     color: ${({ theme }) => theme.textLightGrayColor};
   }
@@ -131,8 +153,8 @@ const ProductInfoImg = styled.img`
 `;
 
 const POSITION = {
-  WIDTH: [250],
-  HEIGHT: [400],
+  WIDTH: [-100, -180, -450, -50, 690, 130, -370],
+  HEIGHT: [600, 50, -50, -500, -310, 170, -430],
 };
 
 export default function ProductLink() {
@@ -161,9 +183,9 @@ export default function ProductLink() {
               onClick={() => onClick(item.productId)}
             >
               {index === item.productId ? (
-                <i className="fas fa-times"></i>
+                <ImoticionBtn className="fas fa-times"></ImoticionBtn>
               ) : (
-                <i className="fas fa-search"></i>
+                <ImoticionBtn className="fas fa-search"></ImoticionBtn>
               )}
               {index === item.productId && (
                 <Modal>
