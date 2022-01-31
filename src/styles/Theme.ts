@@ -1,4 +1,6 @@
-const Theme = {
+import { DefaultTheme } from 'styled-components';
+
+const Theme: DefaultTheme = {
   bgColor: '#F7F7F7',
   orangeColor: '#E78C67',
   pinkColor: '#F083A0',

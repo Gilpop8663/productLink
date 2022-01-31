@@ -28,7 +28,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-    font-family: ${({ theme }) => theme.font};
+    font-family: ${(props) => props.theme.font};
 }
 ol, ul {
 	list-style: none;
