@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getProduct, IProductProps, IProductResponse } from '../../utils/api';
@@ -33,6 +33,7 @@ const Image = styled.img`
 `;
 
 const ImoticionBtn = styled.i`
+  z-index: -1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,7 +46,7 @@ const ImoticionBtn = styled.i`
 `;
 
 const Glass = styled.div`
-  z-index: 1;
+  z-index: 0;
   position: absolute;
   bottom: 0px;
   top: 0px;
@@ -69,6 +70,7 @@ const ProductImage = styled.img`
 
 const Modal = styled.div`
   border-radius: ${({ theme }) => theme.miniRadius};
+  z-index: 5;
   width: 250px;
   height: 80px;
   background-color: white;
@@ -82,6 +84,7 @@ const Modal = styled.div`
     content: '';
     position: absolute;
     top: 0;
+    z-index: 5;
     left: 10%;
     width: 0;
     height: 0;
@@ -92,11 +95,13 @@ const Modal = styled.div`
   }
 
   i {
+    z-index: 5;
     color: ${({ theme }) => theme.textLightGrayColor};
   }
 `;
 
 const InfoContainer = styled.div`
+  z-index: 5;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -145,11 +150,18 @@ const ProductInfoBox = styled.div`
   height: 110px;
   border-radius: ${({ theme }) => theme.bigRadius};
 `;
-const ProductInfoImg = styled.img`
+const ProductInfoImg = styled.img<{ isFocus: boolean }>`
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: ${({ theme }) => theme.bigRadius};
-  border: 1px solid ${({ theme }) => theme.textLightGrayColor};
+  padding: ${(props) => (props.isFocus ? '1px' : '0px')};
+  border: ${(props) =>
+    props.isFocus
+      ? `2px solid ${props.theme.textRedColor}`
+      : `1px solid ${props.theme.textLightGrayColor}`};
 `;
 
 const POSITION = {
@@ -164,8 +176,15 @@ export default function ProductLink() {
     getProduct
   );
   const onClick = (id: number) => {
-    setIndex(id);
+    setIndex((oldId) => {
+      if (oldId === id) {
+        return 0;
+      } else {
+        return id;
+      }
+    });
   };
+
   //console.log(data);
   return (
     <Container>
@@ -216,9 +235,14 @@ export default function ProductLink() {
       {data && (
         <ProductList>
           {data.productList.map((item: IProductProps) => (
-            <ProductInfoBox key={item.productId}>
-              <ProductInfoImg src={item.imageUrl} />
-              asdasdasdassd
+            <ProductInfoBox
+              onClick={() => onClick(item.productId)}
+              key={item.productId}
+            >
+              <ProductInfoImg
+                isFocus={index === item.productId}
+                src={item.imageUrl}
+              />
             </ProductInfoBox>
           ))}
         </ProductList>
