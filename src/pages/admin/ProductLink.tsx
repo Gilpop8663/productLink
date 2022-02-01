@@ -1,4 +1,10 @@
-import { useEffect, useState } from 'react';
+import {
+  MouseEventHandler,
+  ReactEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getProduct, IProductProps, IProductResponse } from '../../utils/api';
@@ -162,21 +168,25 @@ const ProductPriceWrapper = styled.div`
 const ProductList = styled.div`
   display: flex;
   padding: 0px 10px;
-  width: 100%;
   justify-content: space-between;
+  width: 100%;
+  flex-flow: nowrap;
   position: relative;
+  overflow-x: scroll;
   align-items: center;
 `;
 const ProductInfoBox = styled.div`
+  display: inline-block;
   margin: 28px 6px;
   width: 110px;
   height: 110px;
   border-radius: ${({ theme }) => theme.bigRadius};
   cursor: pointer;
 `;
+
 const ProductInfoImg = styled.img<{ isFocus: boolean }>`
-  width: 100%;
-  height: 100%;
+  width: 110px;
+  height: 110px;
   display: flex;
   justify-content: center;
   transform-origin: center;
@@ -195,6 +205,34 @@ const POSITION = {
 };
 
 export default function ProductLink() {
+  const slideRef = useRef<HTMLDivElement>(null);
+  const [isDrag, setIsDrag] = useState(false);
+  const [mouseClickX, setMouseClickX] = useState(0);
+
+  const onMouseDown: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    setIsDrag(true);
+    if (slideRef.current !== null) {
+      setMouseClickX(e.pageX + slideRef.current.scrollLeft);
+    }
+  };
+
+  const onMouseUp: MouseEventHandler<HTMLDivElement> = (e) => {
+    setIsDrag(false);
+  };
+
+  const onMouseLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+    setIsDrag(false);
+  };
+
+  const onMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (!isDrag) return;
+    e.preventDefault();
+    if (slideRef.current !== null) {
+      slideRef.current.scrollLeft = mouseClickX - e.pageX;
+    }
+  };
+
   const [index, setIndex] = useState(0);
   const { data, isLoading } = useQuery<IProductResponse>(
     ['product'],
@@ -209,6 +247,7 @@ export default function ProductLink() {
       }
     });
   };
+  //console.log(slideRef);
   // console.log(data);
   return (
     <Container>
@@ -265,7 +304,24 @@ export default function ProductLink() {
         </Wrapper>
       )}
       {data && (
-        <ProductList>
+        <ProductList
+          ref={slideRef}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+          onMouseMove={onMouseMove}
+        >
+          {data.productList.map((item: IProductProps) => (
+            <ProductInfoBox
+              onClick={() => onClick(item.productId)}
+              key={item.productId}
+            >
+              <ProductInfoImg
+                isFocus={index === item.productId}
+                src={item.imageUrl}
+              />
+            </ProductInfoBox>
+          ))}
           {data.productList.map((item: IProductProps) => (
             <ProductInfoBox
               onClick={() => onClick(item.productId)}
