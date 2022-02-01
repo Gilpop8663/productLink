@@ -10,9 +10,9 @@ const Theme: DefaultTheme = {
   textDarkGrayColor: '#333C45',
   textBlackColor: '#181D1F',
   textRedColor: '#FF585D',
-  bigFontSize: '16px',
-  normalFontSize: '12px',
-  smallFontSize: '9px',
+  bigFontSize: '17px',
+  normalFontSize: '13px',
+  smallFontSize: '10px',
   font: "'Noto Sans KR', sans-serif",
 };
 

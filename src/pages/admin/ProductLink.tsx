@@ -13,6 +13,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  cursor: pointer;
   position: relative;
 `;
 
@@ -34,6 +35,7 @@ const Image = styled.img`
 
 const ImoticionBtn = styled.i`
   z-index: -1;
+  opacity: 0.8;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,6 +45,15 @@ const ImoticionBtn = styled.i`
   background-image: ${({ theme }) =>
     `linear-gradient(180deg,${theme.orangeColor}, ${theme.pinkColor})`};
   font-size: ${({ theme }) => theme.normalFontSize};
+`;
+
+const Imoticon = styled.i`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+  color: ${({ theme }) => theme.textLightGrayColor};
+  font-size: 14px;
 `;
 
 const Glass = styled.div`
@@ -68,35 +79,36 @@ const ProductImage = styled.img`
   border-radius: ${({ theme }) => theme.miniRadius};
 `;
 
-const Modal = styled.div`
+const Modal = styled.div<{ WIDTH: number; HEIGHT: number }>`
   border-radius: ${({ theme }) => theme.miniRadius};
   z-index: 5;
-  width: 250px;
-  height: 80px;
+  width: 203px;
+  height: 67px;
   background-color: white;
+  cursor: pointer;
   position: absolute;
   opacity: 1;
   display: flex;
-  top: 50px;
+  line-height: 22px;
+  top: ${({ HEIGHT }) => (HEIGHT > 0 ? '-97px' : '50px')};
+  left: ${({ WIDTH }) => (WIDTH > 680 ? '-160px' : '-26px')};
   padding: 10px;
-  left: 0;
   &::after {
     content: '';
     position: absolute;
-    top: 0;
+    top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '0')};
+    bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '0' : '')};
     z-index: 5;
-    left: 10%;
+    left: ${({ WIDTH }) => (WIDTH > 680 ? '77.5%' : '17.5%')};
     width: 0;
     height: 0;
     border: 7px solid transparent;
-    border-bottom-color: white;
-    border-top: 7px;
-    margin-top: -7px;
-  }
-
-  i {
-    z-index: 5;
-    color: ${({ theme }) => theme.textLightGrayColor};
+    border-bottom-color: ${({ HEIGHT }) => (HEIGHT > 0 ? 'none' : 'white')};
+    border-top-color: ${({ HEIGHT }) => (HEIGHT > 0 ? 'white' : 'none')};
+    border-top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '0')};
+    border-bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '0' : '')};
+    margin-top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '-7px;')};
+    margin-bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '-7px' : '')};
   }
 `;
 
@@ -106,20 +118,24 @@ const InfoContainer = styled.div`
   justify-content: space-between;
   flex-direction: column;
   margin-left: 10px;
+  width: 100%;
+  height: 100%;
 `;
 
 const Title = styled.span`
   color: ${({ theme }) => theme.textDarkGrayColor};
-  font-size: ${({ theme }) => theme.bigFontSize};
+  font-size: ${({ theme }) => theme.normalFontSize};
 `;
 
 const PriceWrapper = styled.span`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 17px;
 `;
 
 const Expected = styled.span`
+  font-weight: 600;
   color: ${({ theme }) => theme.textLightGrayColor};
   font-size: ${({ theme }) => theme.smallFontSize};
 `;
@@ -134,6 +150,13 @@ const Price = styled.span`
   color: ${({ theme }) => theme.textBlackColor};
   font-size: ${({ theme }) => theme.bigFontSize};
   font-weight: 600;
+  margin-left: 10px;
+`;
+
+const ProductPriceWrapper = styled.div`
+  justify-content: flex-start;
+  display: flex;
+  align-items: center;
 `;
 
 const ProductList = styled.div`
@@ -149,12 +172,14 @@ const ProductInfoBox = styled.div`
   width: 110px;
   height: 110px;
   border-radius: ${({ theme }) => theme.bigRadius};
+  cursor: pointer;
 `;
 const ProductInfoImg = styled.img<{ isFocus: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
+  transform-origin: center;
   align-items: center;
   border-radius: ${({ theme }) => theme.bigRadius};
   padding: ${(props) => (props.isFocus ? '1px' : '0px')};
@@ -184,8 +209,7 @@ export default function ProductLink() {
       }
     });
   };
-
-  //console.log(data);
+  // console.log(data);
   return (
     <Container>
       {isLoading && <Loader>로딩중입니다...</Loader>}
@@ -199,31 +223,39 @@ export default function ProductLink() {
                 top: `${POSITION.HEIGHT[idx]}px`,
               }}
               key={item.productId}
-              onClick={() => onClick(item.productId)}
             >
               {index === item.productId ? (
-                <ImoticionBtn className="fas fa-times"></ImoticionBtn>
+                <ImoticionBtn
+                  onClick={() => onClick(item.productId)}
+                  className="fas fa-times"
+                ></ImoticionBtn>
               ) : (
-                <ImoticionBtn className="fas fa-search"></ImoticionBtn>
+                <ImoticionBtn
+                  onClick={() => onClick(item.productId)}
+                  className="fas fa-search"
+                ></ImoticionBtn>
               )}
               {index === item.productId && (
-                <Modal>
+                <Modal
+                  WIDTH={POSITION.WIDTH[idx]}
+                  HEIGHT={POSITION.HEIGHT[idx]}
+                >
                   <ProductImage src={item.imageUrl} />
                   <InfoContainer>
                     <Title>{item.productName}</Title>
                     <PriceWrapper>
                       {item.outside ? (
-                        <>
+                        <ProductPriceWrapper>
                           <Expected>예상가</Expected>
                           <Price>{item.priceOriginal.toLocaleString()}</Price>
-                        </>
+                        </ProductPriceWrapper>
                       ) : (
-                        <>
+                        <ProductPriceWrapper>
                           <RateDiscount>{item.discountRate}%</RateDiscount>
                           <Price>{item.priceDiscount.toLocaleString()}</Price>
-                        </>
+                        </ProductPriceWrapper>
                       )}
-                      <i className="fas fa-chevron-right"></i>
+                      <Imoticon className="fas fa-chevron-right"></Imoticon>
                     </PriceWrapper>
                   </InfoContainer>
                 </Modal>
