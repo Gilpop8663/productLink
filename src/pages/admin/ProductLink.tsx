@@ -1,6 +1,20 @@
-import { useEffect, useState } from 'react';
+import {
+  MouseEventHandler,
+  PointerEventHandler,
+  ReactEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import {
+  AnimatePresence,
+  motion,
+  useDragControls,
+  useMotionValue,
+  useTransform,
+} from 'framer-motion';
 import { getProduct, IProductProps, IProductResponse } from '../../utils/api';
 
 const Container = styled.div`
@@ -159,24 +173,26 @@ const ProductPriceWrapper = styled.div`
   align-items: center;
 `;
 
-const ProductList = styled.div`
+const ProductList = styled(motion.div)`
+  transition: all 0.5s;
   display: flex;
   padding: 0px 10px;
-  width: 100%;
-  justify-content: space-between;
+  flex-flow: nowrap;
   position: relative;
   align-items: center;
 `;
-const ProductInfoBox = styled.div`
+const ProductInfoBox = styled(motion.div)`
+  display: inline-block;
   margin: 28px 6px;
   width: 110px;
   height: 110px;
   border-radius: ${({ theme }) => theme.bigRadius};
   cursor: pointer;
 `;
-const ProductInfoImg = styled.img<{ isFocus: boolean }>`
-  width: 100%;
-  height: 100%;
+
+const ProductInfoImg = styled(motion.img)<{ isFocus: boolean }>`
+  width: 110px;
+  height: 110px;
   display: flex;
   justify-content: center;
   transform-origin: center;
@@ -192,24 +208,70 @@ const ProductInfoImg = styled.img<{ isFocus: boolean }>`
 const POSITION = {
   WIDTH: [-100, -180, -450, -50, 690, 130, -370],
   HEIGHT: [600, 50, -50, -500, -310, 170, -430],
+  X: [10, 0, -10, -20, -30, -40, -50],
+};
+
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset: number, velocity: number) => {
+  return Math.abs(offset) * velocity;
 };
 
 export default function ProductLink() {
+  const slideRef = useRef<HTMLDivElement>(null);
+  const [isDrag, setIsDrag] = useState(false);
+  // const [mouseClickX, setMouseClickX] = useState(0);
+
+  const x = useMotionValue(0);
+  useEffect(() => {
+    x.onChange(() => {
+      console.log(x.get());
+    });
+  }, [x]);
+
+  // const onMouseDown: MouseEventHandler<HTMLDivElement> = (e) => {
+  //   e.preventDefault();
+  //   setIsDrag(true);
+  //   if (slideRef.current !== null) {
+  //     setMouseClickX(e.pageX + slideRef.current.scrollLeft);
+  //   }
+  // };
+
+  // const onMouseUp: MouseEventHandler<HTMLDivElement> = (e) => {
+  //   setIsDrag(false);
+  // };
+
+  // const onMouseLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+  //   setIsDrag(false);
+  // };
+
+  // const onMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
+  //   if (!isDrag) return;
+  //   e.preventDefault();
+  //   if (slideRef.current !== null) {
+  //     slideRef.current.scrollLeft = mouseClickX - e.pageX;
+  //   }
+  // };
+
   const [index, setIndex] = useState(0);
   const { data, isLoading } = useQuery<IProductResponse>(
     ['product'],
     getProduct
   );
-  const onClick = (id: number) => {
+  const onClick = (id: number, idx: number) => {
     setIndex((oldId) => {
       if (oldId === id) {
         return 0;
       } else {
+        x.set(POSITION.X[idx]);
         return id;
       }
     });
   };
-  // console.log(data);
+
+  // console.log(slideWidth);
+  //console.log(slideRef);
+  console.log(data);
+
   return (
     <Container>
       {isLoading && <Loader>로딩중입니다...</Loader>}
@@ -226,12 +288,12 @@ export default function ProductLink() {
             >
               {index === item.productId ? (
                 <ImoticionBtn
-                  onClick={() => onClick(item.productId)}
+                  onClick={() => onClick(item.productId, idx)}
                   className="fas fa-times"
                 ></ImoticionBtn>
               ) : (
                 <ImoticionBtn
-                  onClick={() => onClick(item.productId)}
+                  onClick={() => onClick(item.productId, idx)}
                   className="fas fa-search"
                 ></ImoticionBtn>
               )}
@@ -265,19 +327,54 @@ export default function ProductLink() {
         </Wrapper>
       )}
       {data && (
-        <ProductList>
-          {data.productList.map((item: IProductProps) => (
-            <ProductInfoBox
-              onClick={() => onClick(item.productId)}
-              key={item.productId}
-            >
-              <ProductInfoImg
-                isFocus={index === item.productId}
-                src={item.imageUrl}
-              />
-            </ProductInfoBox>
-          ))}
-        </ProductList>
+        <AnimatePresence>
+          <ProductList
+            ref={slideRef}
+            // x: { type: 'spring', stiffness: 1000, damping: 10 },
+            transition={{
+              type: 'spring',
+              stiffness: 0,
+              damping: 0,
+            }}
+            style={{ x }}
+            drag="x"
+            dragConstraints={{ left: 10, right: -50 }}
+            dragElastic={1}
+            onDragStart={() => {
+              setIsDrag(true);
+            }}
+            onDragEnd={() => {
+              setIsDrag(false);
+            }}
+          >
+            {data.productList.map((item: IProductProps, idx: number) => (
+              <ProductInfoBox
+                onClick={() => onClick(item.productId, idx)}
+                key={item.productId}
+              >
+                <ProductInfoImg
+                  drag="x"
+                  style={{ x }}
+                  dragConstraints={{ left: 10, right: -50 }}
+                  onClick={() => {
+                    if (!isDrag) {
+                      x.set(POSITION.X[idx]);
+                    }
+                  }}
+                  dragElastic={1}
+                  isFocus={index === item.productId}
+                  src={item.imageUrl}
+                  onDragStart={() => {
+                    setIsDrag(true);
+                  }}
+                  onDragEnd={() => {
+                    setIsDrag(false);
+                  }}
+                />
+              </ProductInfoBox>
+            ))}
+          </ProductList>
+        </AnimatePresence>
       )}
     </Container>
   );
