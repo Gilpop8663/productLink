@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { IProductProps, IProductResponse, POSITION } from 'utils';
 
 const ProductList = styled(motion.div)`
-  transition: all 0.5s;
+  transition: all 0.3s;
+  width: 50px;
   display: flex;
   padding: 0px 10px;
   flex-flow: nowrap;

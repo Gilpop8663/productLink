@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { useMotionValue } from 'framer-motion';
 import { getProduct, IProductResponse } from '../../utils';
-import { HouseIntroduction, ProductListBottom } from './components';
+import { HouseIntroduction, PageTitle, ProductListBottom } from './components';
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.bgColor};
@@ -26,13 +26,11 @@ const Loader = styled.div`
 export default function ProductLink() {
   const x = useMotionValue(0);
   const [index, setIndex] = useState(0);
-  const { data, isLoading } = useQuery<IProductResponse>(
-    ['product'],
-    getProduct
-  );
+  const { data, isLoading } = useQuery<IProductResponse>('product', getProduct);
   return (
     <Container>
       {isLoading && <Loader>로딩중입니다...</Loader>}
+      {data && <PageTitle />}
       {data && (
         <HouseIntroduction
           data={data}
