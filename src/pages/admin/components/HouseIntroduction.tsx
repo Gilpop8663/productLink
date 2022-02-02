@@ -1,8 +1,8 @@
 import { SetStateAction } from 'react';
 import { MotionValue } from 'framer-motion';
 import styled from 'styled-components';
-import { POSITION, IProductProps, IProductResponse } from 'utils';
 import { Dispatch } from 'react';
+import { IProductProps, IProductResponse, POSITION } from 'utils';
 
 const Wrapper = styled.div`
   cursor: pointer;

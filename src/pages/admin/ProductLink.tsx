@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { useMotionValue } from 'framer-motion';
-import { getProduct, IProductResponse } from '../../utils';
+import { getProduct, IProductResponse } from 'utils';
 import { HouseIntroduction, PageTitle, ProductListBottom } from './components';
 
 const Container = styled.div`
