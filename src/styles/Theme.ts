@@ -13,7 +13,7 @@ const Theme: DefaultTheme = {
   bigFontSize: '17px',
   normalFontSize: '13px',
   smallFontSize: '10px',
-  font: "'Noto Sans KR', sans-serif",
+  font: "'Spoqa Han Sans Neo', 'sans-serif'",
 };
 
 export default Theme;
