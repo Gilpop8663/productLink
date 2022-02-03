@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { motion, MotionValue } from 'framer-motion';
 import styled from 'styled-components';
-import { IProductProps, IProductResponse, POSITION } from '../../../utils';
+import { IProductProps } from '../../../utils';
 
 const ProductList = styled(motion.div)`
   width: 100%;
@@ -83,16 +83,13 @@ function ProductListBottom({ x, index, data, setIndex }: IProductListProps) {
       setRight(
         -(slideRef.current.scrollWidth - slideRef.current.offsetWidth) / 2 - 30
       );
-      console.dir(slideRef.current.scrollWidth);
-      console.dir(slideRef.current.offsetWidth);
     }
   }, [slideRef]);
 
   const [isDrag, setIsDrag] = useState(false);
-  console.log(isDrag);
   const onClick = (id: number, idx: number) => {
     if (isDrag) return;
-    x.set(idx > 6 ? -60 + -(idx - 6) * 60 : -idx * 10);
+    x.set(idx > 5 ? -50 - (idx - 6) * 60 : -idx * 5);
     setIndex((oldId) => {
       if (oldId === id) {
         return 0;
@@ -106,7 +103,9 @@ function ProductListBottom({ x, index, data, setIndex }: IProductListProps) {
     <ProductList
       ref={slideRef}
       transition={{
-        type: 'tween',
+        type: 'spring',
+        stiffness: 1000,
+        damping: 200,
       }}
       style={{ x }}
       dragConstraints={{
@@ -115,18 +114,6 @@ function ProductListBottom({ x, index, data, setIndex }: IProductListProps) {
       }}
       drag="x"
       dragElastic={1}
-      onMouseUp={() => {
-        if (!isDrag) return;
-        setTimeout(() => {
-          setIsDrag(false);
-        }, 500);
-      }}
-      onMouseDown={() => {
-        if (isDrag) return;
-        setTimeout(() => {
-          setIsDrag(true);
-        }, 500);
-      }}
     >
       {data.productList.map((item: IProductProps, idx: number) => (
         <ProductInfoBox
@@ -134,21 +121,22 @@ function ProductListBottom({ x, index, data, setIndex }: IProductListProps) {
           key={item.productId}
         >
           <ProductInfoImg
+            onDragStart={() => setIsDrag(true)}
+            onDragEnd={() => {
+              setTimeout(() => {
+                setIsDrag(false);
+              }, 500);
+            }}
             drag="x"
             style={{ x }}
             dragConstraints={{
               left: right,
               right: 10,
             }}
-            onClick={() => {
-              if (!isDrag) {
-                x.set(-idx * 110);
-              }
-            }}
             dragElastic={1}
             isfocus={index ? index === item.productId : undefined}
             src={item.imageUrl}
-          ></ProductInfoImg>
+          />
           {!item.outside && (
             <RateDiscount
               isfocus={index ? index === item.productId : undefined}

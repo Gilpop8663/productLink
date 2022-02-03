@@ -2,7 +2,7 @@ import { SetStateAction } from 'react';
 import { MotionValue } from 'framer-motion';
 import styled from 'styled-components';
 import { Dispatch } from 'react';
-import { IProductProps, IProductResponse, POSITION } from 'utils';
+import { IProductProps, IProductResponse } from 'utils';
 
 const Wrapper = styled.div`
   cursor: pointer;
@@ -68,25 +68,25 @@ const Modal = styled.div<{ WIDTH: number; HEIGHT: number }>`
   opacity: 1;
   display: flex;
   line-height: 22px;
-  top: ${({ HEIGHT }) => (HEIGHT > 0 ? '-97px' : '50px')};
-  left: ${({ WIDTH }) => (WIDTH > 680 ? '-160px' : '-26px')};
+  top: ${({ HEIGHT }) => (HEIGHT > 300 ? '-103px' : '40px')};
+  left: ${({ WIDTH }) => (WIDTH > 400 ? '-167px' : '-33px')};
   padding: 10px;
   &::after {
     content: '';
     position: absolute;
-    top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '0')};
-    bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '0' : '')};
+    top: ${({ HEIGHT }) => (HEIGHT > 300 ? '' : '0')};
+    bottom: ${({ HEIGHT }) => (HEIGHT > 300 ? '0' : '')};
     z-index: 5;
-    left: ${({ WIDTH }) => (WIDTH > 680 ? '77.5%' : '17.5%')};
+    left: ${({ WIDTH }) => (WIDTH > 400 ? '77.5%' : '17.5%')};
     width: 0;
     height: 0;
     border: 7px solid transparent;
-    border-bottom-color: ${({ HEIGHT }) => (HEIGHT > 0 ? 'none' : 'white')};
-    border-top-color: ${({ HEIGHT }) => (HEIGHT > 0 ? 'white' : 'none')};
-    border-top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '0')};
-    border-bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '0' : '')};
-    margin-top: ${({ HEIGHT }) => (HEIGHT > 0 ? '' : '-7px;')};
-    margin-bottom: ${({ HEIGHT }) => (HEIGHT > 0 ? '-7px' : '')};
+    border-bottom-color: ${({ HEIGHT }) => (HEIGHT > 300 ? 'none' : 'white')};
+    border-top-color: ${({ HEIGHT }) => (HEIGHT > 300 ? 'white' : 'none')};
+    border-top: ${({ HEIGHT }) => (HEIGHT > 300 ? '' : '0')};
+    border-bottom: ${({ HEIGHT }) => (HEIGHT > 300 ? '0' : '')};
+    margin-top: ${({ HEIGHT }) => (HEIGHT > 300 ? '' : '-7px;')};
+    margin-bottom: ${({ HEIGHT }) => (HEIGHT > 300 ? '-7px' : '')};
   }
 `;
 
@@ -147,11 +147,11 @@ interface IHouseProps {
 
 function HouseIntroduction({ data, index, setIndex, x }: IHouseProps) {
   const onClick = (id: number, idx: number) => {
+    x.set(idx > 5 ? -50 - (idx - 6) * 60 : -idx * 5);
     setIndex((oldId) => {
       if (oldId === id) {
         return 0;
       } else {
-        x.set(POSITION.X[idx]);
         return id;
       }
     });
@@ -181,7 +181,7 @@ function HouseIntroduction({ data, index, setIndex, x }: IHouseProps) {
             />
           )}
           {index === item.productId && (
-            <Modal WIDTH={POSITION.WIDTH[idx]} HEIGHT={POSITION.HEIGHT[idx]}>
+            <Modal WIDTH={item.pointY} HEIGHT={item.pointX}>
               <ProductImage src={item.imageUrl} />
               <InfoContainer>
                 <Title>{item.productName}</Title>
