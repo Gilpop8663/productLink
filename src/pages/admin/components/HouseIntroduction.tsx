@@ -41,21 +41,15 @@ const Imoticon = styled.i`
 `;
 
 const Glass = styled.div`
+  top: 0;
   z-index: 0;
   position: absolute;
-  bottom: 0px;
-  top: 0px;
   width: 40px;
   height: 40px;
-  left: 0px;
-  right: 0px;
-  margin: auto;
   font-size: 28px;
   color: white;
   flex-direction: column;
   display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const ProductImage = styled.img`
@@ -168,8 +162,10 @@ function HouseIntroduction({ data, index, setIndex, x }: IHouseProps) {
       {data.productList.map((item: IProductProps, idx: number) => (
         <Glass
           style={{
-            left: `${POSITION.WIDTH[idx]}px`,
-            top: `${POSITION.HEIGHT[idx]}px`,
+            // left: `${POSITION.WIDTH[idx]}px`,
+            // top: `${POSITION.HEIGHT[idx]}px`,
+            left: `${item.pointY * 1.6 + 20}px`,
+            top: `${item.pointX * 1.6}px`,
           }}
           key={item.productId}
         >
