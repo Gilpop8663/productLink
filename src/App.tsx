@@ -4,7 +4,7 @@ import ProductLink from './pages/admin/ProductLink';
 const Conatiner = styled.div`
   display: flex;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bgColor};
+  background-color: ${({ theme }) => theme.textBlackColor};
   width: 100%;
   height: 150vh;
 `;
