@@ -1,6 +1,9 @@
 ## 배포 주소
 
-<a target="_blank" href="https://d35qd7o8jcwgej.cloudfront.net/">상품 정보 사이트</a>
+## <a target="_blank" href="https://d35qd7o8jcwgej.cloudfront.net/">상품 정보 사이트</a>
+
+## 회고록
+## <a href="https://hell-of-company-builder.tistory.com/255?category=921712">블로그 회고록</a>
 
 ## 💻 설치 방법
 
