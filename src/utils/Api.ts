@@ -21,3 +21,4 @@ export function getProduct() {
     (response) => response.json()
   );
 }
+//why
